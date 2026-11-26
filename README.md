@@ -38,6 +38,13 @@ The task and date demo data is stored only in the current browser/device. Cleari
 4. Push to the default branch or run the Pages workflow.
 5. Confirm a successful workflow and open the published URL in Settings → Pages.
 
+## Initial monetization experiment
+
+- Free plan: $0, with the current personal task and important-date preview.
+- Premium monthly: proposed $4.99/month.
+- Premium annual: proposed $39.99/year (about 33% less than paying monthly for 12 months).
+- The Plans & Pricing screen is a non-transactional preview only. It stores a plan selection locally; there is no checkout, subscription, customer account or paid feature gating. Prices are hypotheses to validate with users, not guaranteed revenue.
+
 ## Production roadmap
 
 1. Confirm final artwork export dimensions and prepare dedicated square 512px/1024px store icons plus platform-specific splash screens; the current approved WebP is used in the web app.
