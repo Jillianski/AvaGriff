@@ -1,1 +1,10 @@
-{"name":"AvaGriff — Plan. Focus. Thrive.","short_name":"AvaGriff","start_url":"./","scope":"./","display":"standalone","background_color":"#fbf8f1","theme_color":"#28104f","description":"A calmer daily organizer for individuals and families.","icons":[{"src":"assets/griffin-mark.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
+{
+  "name": "AvaGriff — Plan. Focus. Thrive.",
+  "short_name": "AvaGriff",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f2fa",
+  "theme_color": "#210b3d",
+  "description": "Your personal life assistant for a more organized, balanced and inspired life."
+}
