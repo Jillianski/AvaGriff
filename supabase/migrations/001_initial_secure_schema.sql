@@ -118,8 +118,23 @@ create policy "households_delete_owner" on public.households for delete to authe
 
 create policy "members_select_household" on public.household_members for select to authenticated using (public.is_household_member(household_id));
 create policy "members_insert_admin" on public.household_members for insert to authenticated with check (public.is_household_admin(household_id));
-create policy "members_update_admin" on public.household_members for update to authenticated using (public.is_household_admin(household_id)) with check (public.is_household_admin(household_id));
-create policy "members_delete_admin_or_self" on public.household_members for delete to authenticated using (user_id = auth.uid() or public.is_household_admin(household_id));
+-- Membership role changes are intentionally server-managed; no client UPDATE policy.
+create policy "members_delete_self_or_admin_non_owner" on public.household_members for delete to authenticated using (user_id = auth.uid() or (public.is_household_admin(household_id) and role <> 'owner'));
+
+-- Automatically make the household creator its owner, avoiding an ownerless household.
+create or replace function public.add_household_creator_as_owner()
+returns trigger language plpgsql security definer
+set search_path = public, pg_temp
+as $
+begin
+  insert into public.household_members(household_id, user_id, role)
+  values (new.id, new.created_by, 'owner');
+  return new;
+end;
+$;
+create trigger households_add_creator_owner
+after insert on public.households
+for each row execute function public.add_household_creator_as_owner();
 
 create policy "invites_select_admin" on public.household_invites for select to authenticated using (public.is_household_admin(household_id));
 create policy "invites_insert_admin" on public.household_invites for insert to authenticated with check (public.is_household_admin(household_id) and invited_by = auth.uid());
