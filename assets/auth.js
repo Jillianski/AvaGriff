@@ -2,22 +2,22 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const status = document.getElementById("authStatus");
 const form = document.getElementById("authForm");
-if (!form || !status) {
-  // The auth module is loaded on every page, but the account view may be absent in an older cached shell.
-} else {
+
+if (form && status) {
   const configScript = document.createElement("script");
-  configScript.src = "./assets/supabase-config.js";
+  configScript.src = "./assets/supabase-config.js?v=2";
   configScript.onload = initialise;
-  configScript.onerror = () => { status.textContent = "Could not load the account configuration."; };
+  configScript.onerror = () => { status.textContent = "Could not load the account configuration. Refresh the page and try again."; };
   document.head.append(configScript);
 }
 
 function initialise() {
   const cfg = window.AVAGRIFF_SUPABASE_CONFIG || {};
   if (!cfg.url || !cfg.publishableKey) {
-    status.textContent = "Not connected yet. The owner must add the Supabase Project URL and publishable key. No password or customer data is sent anywhere.";
+    status.textContent = "Account setup is incomplete. The Supabase project URL and publishable key are required.";
     return;
   }
+
   let client;
   try {
     client = createClient(cfg.url, cfg.publishableKey, {
@@ -37,31 +37,39 @@ function initialise() {
   const redirectTo = window.location.origin + window.location.pathname;
 
   function showMessage(message) { status.textContent = message; }
-  function showSession(session) {
-    if (session?.user) {
-      showMessage("Signed in as " + session.user.email + ". Email confirmation and project security settings still apply.");
-      signOut.style.display = "inline-block";
-      signIn.disabled = signUp.disabled = false;
-    } else {
-      showMessage("Not signed in. Your personal demo data remains stored only in this browser.");
-      signOut.style.display = "none";
-    }
+  function setBusy(busy) {
+    signIn.disabled = busy;
+    signUp.disabled = busy;
+    reset.disabled = busy;
+    signOut.disabled = busy;
   }
+  function showSession(session) {
+    const signedIn = Boolean(session?.user);
+    showMessage(signedIn
+      ? "Signed in as " + session.user.email + "."
+      : "Not signed in. Enter an email and password to sign in or create a free account.");
+    signOut.style.display = signedIn ? "inline-block" : "none";
+    signIn.disabled = signUp.disabled = reset.disabled = false;
+  }
+
   client.auth.getSession().then(({ data, error }) => {
-    if (error) showMessage("Could not read sign-in status. Please try again.");
+    if (error) showMessage("Could not read sign-in status. Refresh the page and try again.");
     else showSession(data.session);
   });
   client.auth.onAuthStateChange((_event, session) => showSession(session));
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!email.checkValidity() || !password.checkValidity()) return;
-    signIn.disabled = signUp.disabled = true;
+    if (!email.checkValidity() || !password.checkValidity()) {
+      showMessage("Enter a valid email and a password of at least 8 characters.");
+      return;
+    }
+    setBusy(true);
     showMessage("Signing in securely…");
     const { data, error } = await client.auth.signInWithPassword({
       email: email.value.trim(), password: password.value
     });
-    signIn.disabled = signUp.disabled = false;
+    setBusy(false);
     if (error) showMessage("Sign-in failed: " + error.message);
     else showSession(data.session);
   });
@@ -71,17 +79,33 @@ function initialise() {
       showMessage("Enter a valid email and a password of at least 8 characters.");
       return;
     }
-    signIn.disabled = signUp.disabled = true;
-    showMessage("Creating your account…");
+    setBusy(true);
+    showMessage("Preparing a new account…");
+    // A user already signed in should be signed out before switching to a different account.
+    const { data: current, error: sessionError } = await client.auth.getSession();
+    if (sessionError) {
+      setBusy(false);
+      showMessage("Could not check the current session. Please refresh and try again.");
+      return;
+    }
+    if (current.session) {
+      const { error: signOutError } = await client.auth.signOut();
+      if (signOutError) {
+        setBusy(false);
+        showMessage("Could not sign out the current account: " + signOutError.message);
+        return;
+      }
+    }
+    showMessage("Creating your free account…");
     const { data, error } = await client.auth.signUp({
       email: email.value.trim(),
       password: password.value,
       options: { emailRedirectTo: redirectTo }
     });
-    signIn.disabled = signUp.disabled = false;
+    setBusy(false);
     if (error) showMessage("Account creation failed: " + error.message);
     else if (data.session) showSession(data.session);
-    else showMessage("Account request received. Check your email to confirm your address before signing in.");
+    else showMessage("Account request received. Check your email to confirm the new address, then sign in.");
   });
 
   reset.addEventListener("click", async () => {
@@ -89,16 +113,18 @@ function initialise() {
       showMessage("Enter your account email first.");
       return;
     }
-    reset.disabled = true;
+    setBusy(true);
     const { error } = await client.auth.resetPasswordForEmail(email.value.trim(), { redirectTo });
-    reset.disabled = false;
+    setBusy(false);
     showMessage(error ? "Password reset could not be sent: " + error.message : "If the account exists, a password reset email will arrive shortly.");
   });
 
   signOut.addEventListener("click", async () => {
-    signOut.disabled = true;
+    setBusy(true);
+    showMessage("Signing out…");
     const { error } = await client.auth.signOut();
-    signOut.disabled = false;
-    showMessage(error ? "Sign-out failed. Please try again." : "You are signed out.");
+    setBusy(false);
+    if (error) showMessage("Sign-out failed: " + error.message);
+    else showSession(null);
   });
 }
