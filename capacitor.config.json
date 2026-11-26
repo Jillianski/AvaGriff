@@ -1,7 +1,7 @@
 {
   "appId": "com.avagriff.app",
   "appName": "AvaGriff",
-  "webDir": ".",
+  "webDir": "dist",
   "server": {
     "androidScheme": "https"
   },
