@@ -1,34 +1,36 @@
 # AvaGriff — Plan. Focus. Thrive.
 
-AvaGriff is an early browser-based daily organizer concept for individuals and families.
+AvaGriff is a polished early-stage daily-planning web app concept for individuals and families.
 
-## Current beta features
-- Add, complete and delete daily tasks.
-- Track simple progress.
-- Save important dates.
-- Browser local-storage persistence on one device.
-- Responsive layout and basic offline app-shell caching.
+## Current experience
+- Responsive royal-purple, gold and warm-ivory brand system.
+- Original heraldic griffin emblem (temporary vector interpretation; replace with founder-approved supplied artwork when its image file is available).
+- My Day dashboard with task creation, completion, deletion and progress.
+- Important Dates with local browser storage.
+- Navigation previews for Family Hub and Griffin Rewards.
+- Installable PWA manifest and basic offline app-shell caching.
 
-## Important limitations
-This is an early beta, not a production multi-user service. It has **no** user accounts, cloud database, cross-device synchronization, household invitations, notifications, subscription billing, analytics, customer support automation, or native iOS/Android store builds. Local browser data is not backed up or synced. Do not enter sensitive or confidential information. The current griffin emblem is a temporary vector interpretation; replace it with the founder-supplied approved mascot image before public brand launch.
+## Honest feature status
+Functional in this beta: individual tasks and important dates saved locally in the current browser/device.
+
+Visual previews only: Family Hub, shared household lists, family invitations, cloud sync, rewards, streaks, notifications and subscriptions. These are not implemented or available to customers.
+
+No accounts, backend sync, payments, analytics, automatic backups or native iOS/Android store builds are active. Do not enter sensitive or confidential information. Local browser data can be lost if site data is cleared.
 
 ## Deploy with GitHub Pages
-1. In this repository, open **Settings → Pages**.
-2. Under **Build and deployment**, select **Deploy from a branch**.
-3. Select branch **main** and folder **/(root)**, then Save.
-4. Wait for GitHub Pages to publish. The exact URL will appear on that settings page.
-5. Test on iPhone Safari and Android Chrome. On supported browsers, use Add to Home Screen / Install app.
-
-GitHub Pages documentation: https://docs.github.com/en/pages/getting-started-with-github-pages
+1. Open Settings → Pages.
+2. Under Build and deployment, set Source to GitHub Actions.
+3. Confirm GitHub Actions permissions allow the Pages deployment workflow.
+4. Push to main or run the workflow manually.
+5. Confirm the workflow succeeds and use the published URL shown in Settings → Pages.
 
 ## Production roadmap
-1. Create a founder-owned backend project.
-2. Implement secure authentication and server-verified family invitations.
-3. Connect cloud data and test row-level access with separate accounts.
-4. Add account export/deletion, backups, monitoring, support, and security review.
-5. Complete privacy notice, terms, intellectual-property clearance and age-related safeguards.
-6. Add subscriptions only after pricing, tax, refunds, cancellation and store policies are finalized.
-7. Build and submit native apps if validated demand justifies the cost.
+1. Replace the temporary vector emblem with the founder-approved mascot source artwork.
+2. Create a founder-owned production backend and implement secure authentication.
+3. Build server-authorized family invitations, household roles and data isolation.
+4. Add cloud sync, backups, export and account deletion.
+5. Complete privacy, security, accessibility and legal review.
+6. Validate demand with users before enabling subscriptions.
+7. Add payment processing and native app-store builds only after testing and cost approval.
 
-## Ownership and costs
-Keep this repository, hosting, database, domain, app-store and payment accounts under the founder's control with MFA and recovery methods. GitHub Pages may be available at no hosting charge for eligible public repositories, but domain registration, production backend, email, payments, legal review and app-store accounts may cost money. No paid plan should be activated without explicit founder approval.
+Keep the GitHub, domain, hosting, backend, payment and app-store accounts under the founder's control with multi-factor authentication. No paid service should be activated without explicit approval.
