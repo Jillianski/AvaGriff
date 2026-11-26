@@ -85,7 +85,7 @@ as $$
     select 1 from public.household_members hm
     where hm.household_id = target_household and hm.user_id = auth.uid()
   );
-$$;
+$function$;
 
 create or replace function public.is_household_admin(target_household uuid)
 returns boolean language sql stable security definer
@@ -125,13 +125,13 @@ create policy "members_delete_self_or_admin_non_owner" on public.household_membe
 create or replace function public.add_household_creator_as_owner()
 returns trigger language plpgsql security definer
 set search_path = public, pg_temp
-as $
+as $function$
 begin
   insert into public.household_members(household_id, user_id, role)
   values (new.id, new.created_by, 'owner');
   return new;
 end;
-$;
+$function$;
 create trigger households_add_creator_owner
 after insert on public.households
 for each row execute function public.add_household_creator_as_owner();
