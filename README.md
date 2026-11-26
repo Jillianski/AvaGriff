@@ -22,7 +22,7 @@ Implemented in this web preview:
 - Responsive navigation and PWA manifest.
 
 Not yet implemented:
-- The exact supplied griffin artwork as a committed image asset or app icon. The current gold “A” medallion is a temporary monogram, not the approved griffin mascot.
+- The founder-approved griffin artwork is committed at `assets/avagriff-griffin.webp` and is used in the mobile brand header, dashboard mascot area, favicon and loading screen. The service worker caches the mascot asset for repeat/offline visits.
 - User accounts, authentication, cloud synchronization or family sharing.
 - Real family activity feed, invitations, household roles or notifications.
 - Rewards, points, badges, streak calculations or purchases.
@@ -40,7 +40,7 @@ The task and date demo data is stored only in the current browser/device. Cleari
 
 ## Production roadmap
 
-1. Add the founder-approved original griffin image as optimized web, app-icon and splash-screen assets.
+1. Confirm final artwork export dimensions and prepare dedicated square 512px/1024px store icons plus platform-specific splash screens; the current approved WebP is used in the web app.
 2. Validate the product with real individual and family users.
 3. Implement secure accounts, a production database, cloud sync and data export/deletion.
 4. Implement family invitations, household permissions and shared activity.
