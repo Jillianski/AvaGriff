@@ -23,10 +23,10 @@ Implemented in this web preview:
 
 Not yet implemented:
 - The founder-approved griffin artwork is committed at `assets/avagriff-griffin.webp` and is used in the mobile brand header, dashboard mascot area, favicon and loading screen. The service worker caches the mascot asset for repeat/offline visits.
-- User accounts, authentication, cloud synchronization or family sharing.
+- User registration/sign-in, password recovery, cloud synchronization or family sharing. The starter Supabase schema is in `supabase/migrations/001_initial_secure_schema.sql`; it is not activated and has not been security-reviewed.
 - Real family activity feed, invitations, household roles or notifications.
 - Rewards, points, badges, streak calculations or purchases.
-- Payment processing, subscriptions, analytics, backups or native app-store builds.
+- Payment processing, subscription enforcement, analytics, backups or native app-store builds. Capacitor preparation files are present, but iOS/Android projects still need to be generated and tested.
 
 The task and date demo data is stored only in the current browser/device. Clearing browser site data may erase it. Avoid entering sensitive information. This preview is not ready for paid customer launch.
 
@@ -44,6 +44,15 @@ The task and date demo data is stored only in the current browser/device. Cleari
 - Premium monthly: proposed $4.99/month.
 - Premium annual: proposed $39.99/year (about 33% less than paying monthly for 12 months).
 - The Plans & Pricing screen is a non-transactional preview only. It stores a plan selection locally; there is no checkout, subscription, customer account or paid feature gating. Prices are hypotheses to validate with users, not guaranteed revenue.
+
+## Zero-cost technical preparation
+
+- Supabase starter schema with row-level security policies: `supabase/migrations/001_initial_secure_schema.sql`.
+- Backend activation, secure invitations, billing and mobile release checklist: `docs/PRODUCTION_SETUP.md`.
+- Capacitor configuration and static web build script: `capacitor.config.json`, `scripts/build.mjs`.
+- Local setup template: `.env.example` (contains no credentials).
+
+No backend project, payment provider, app-store account, API key or paid service has been created or connected. Do not enter customer information in the browser demo.
 
 ## Production roadmap
 
