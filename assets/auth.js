@@ -103,7 +103,7 @@ function initialise() {
       options: { emailRedirectTo: redirectTo }
     });
     setBusy(false);
-    if (error) showMessage("Account creation failed: " + error.message);
+    if (error) { const detail = error.message || "Unknown error"; showMessage(/security purposes|after \d+ seconds|rate limit/i.test(detail) ? "Account creation is temporarily rate-limited by Supabase. Wait at least 20 seconds without retrying, then try once. " + detail : "Account creation failed: " + detail); }
     else if (data.session) showSession(data.session);
     else showMessage("Account request received. Check your email to confirm the new address, then sign in.");
   });
