@@ -1,0 +1,11 @@
+{
+  "appId": "com.avagriff.app",
+  "appName": "AvaGriff",
+  "webDir": ".",
+  "server": {
+    "androidScheme": "https"
+  },
+  "ios": {
+    "contentInset": "automatic"
+  }
+}
