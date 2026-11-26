@@ -61,16 +61,11 @@ Deno.serve(async (request) => {
     const eventType = event.event_type;
     if (!eventId || !eventType) return new Response("Invalid event", { status: 400 });
 
-    const { error: ledgerError } = await admin.from("paypal_webhook_events")
-      .insert({ event_id: eventId, event_type: eventType });
-    if (ledgerError?.code === "23505") return new Response("Already processed", { status: 200 });
-    if (ledgerError) throw ledgerError;
-
     const resource = event.resource ?? {};
     const subscriptionId = resource.id && String(resource.id).startsWith("I-")
       ? resource.id
       : resource.billing_agreement_id ?? resource.subscription_id;
-    const customUserId = resource.custom_id ?? resource.supplementary_data?.related_ids?.order_id;
+    const customUserId = resource.custom_id;
     const planId = resource.plan_id ?? resource.billing_info?.plan_id;
     const monthlyPlanId = Deno.env.get("PAYPAL_MONTHLY_PLAN_ID");
     const annualPlanId = Deno.env.get("PAYPAL_ANNUAL_PLAN_ID");
@@ -84,13 +79,16 @@ Deno.serve(async (request) => {
       "BILLING.SUBSCRIPTION.SUSPENDED",
     ]);
     if (activeEvents.has(eventType) || inactiveEvents.has(eventType)) {
-      const status = activeEvents.has(eventType) ? "active"
-        : eventType.endsWith("CANCELLED") ? "cancelled"
-        : eventType.endsWith("EXPIRED") ? "expired" : "suspended";
+      const providerStatus = String(resource.status ?? "").toUpperCase();
+      const status = providerStatus === "ACTIVE" ? "active"
+        : providerStatus === "CANCELLED" || eventType.endsWith("CANCELLED") ? "cancelled"
+        : providerStatus === "EXPIRED" || eventType.endsWith("EXPIRED") ? "expired"
+        : providerStatus === "SUSPENDED" || eventType.endsWith("SUSPENDED") ? "suspended"
+        : "inactive";
       const userId = customUserId;
       if (!userId || !subscriptionId || !plan) {
         console.error("Verified PayPal subscription event lacked required mapping", eventType);
-        return new Response("Event accepted; subscription mapping requires review", { status: 200 });
+        return new Response("Subscription mapping is incomplete; retry after correction.", { status: 500 });
       }
       const periodEnd = resource.billing_info?.next_billing_time ?? null;
       const { error } = await admin.from("subscriptions").upsert({
@@ -105,6 +103,13 @@ Deno.serve(async (request) => {
       }, { onConflict: "user_id" });
       if (error) throw error;
     }
+
+    // Record only after all required processing succeeds, so PayPal retries can recover
+    // from transient database errors instead of being incorrectly marked as handled.
+    const { error: ledgerError } = await admin.from("paypal_webhook_events")
+      .insert({ event_id: eventId, event_type: eventType });
+    if (ledgerError?.code === "23505") return new Response("Already processed", { status: 200 });
+    if (ledgerError) throw ledgerError;
 
     return new Response("OK", { status: 200 });
   } catch (error) {
