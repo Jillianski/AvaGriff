@@ -1,9 +1,8 @@
-// AvaGriff public client configuration.
-// Replace the empty strings with the Project URL and publishable (anon) key
-// from the Supabase project owned by the founder.
-// The publishable key is designed for client use; database RLS is mandatory.
-// NEVER put a Supabase service_role/secret key in this file.
+// AvaGriff public Supabase client configuration.
+// This file intentionally contains only the project URL and publishable key.
+// The publishable key is safe for client-side use when Row Level Security (RLS)
+// and appropriate Auth policies are enabled. Never add a service_role/secret key.
 window.AVAGRIFF_SUPABASE_CONFIG = {
-  url: "",
-  publishableKey: ""
+  url: "https://yzjhopafqxcvnarapqil.supabase.co",
+  publishableKey: "sb_publishable_ZJlQUyzHAQTLyQy_ydihmg_uLrUETZk"
 };
